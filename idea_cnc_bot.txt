@@ -1,0 +1,5 @@
+Yêu cầu:
+- Lưu 3 bản ghi (postscript) vào 3 file "<fname>.dat"
+- Macro 3 bản ghi theo thứ tự vào các phím trên KeyMatrix 0, 4, 8 (tham khảo trong Lab w11)
+- Đọc các file postscript bằng syscall 13 (tham khảo trong Lab w5)
+- Các thao tác với Mars Bot (tham khảo trong Lab w10)
