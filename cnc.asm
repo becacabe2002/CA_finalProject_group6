@@ -82,7 +82,7 @@ READ_PSCRIPT:
 	lb $t5, 0($t7) 
  	addi $t5, $t5, -48
  	beq $t5, $zero, CHECK_UNTRACK # 1=track | 0=untrack
- 	jal UNTRACK
+ 	# jal UNTRACK
 	jal TRACK
 	j INCREAMENT
 	
