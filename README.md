@@ -603,18 +603,16 @@ postcript3: .asciiz "180,9000,0;90,2000,0;0,6000,1;140,4000,1;40,4000,1;180,6000
 	}
 ```
 **D. KẾT THÚC CHƯƠNG TRÌNH**
-* Dừng Marsbot, hỏi người dùng có muốn thực hiện lại chương trình hay không?
+* Dừng Marsbot, hiện thông báo
   ```shell
   END:
     jal STOP
     
-  ASK_LOOP: # hoi nguoi dung co muon lap lai chuong trinh khong
-    li $v0, 50
-    la $a0, notification
-    syscall
-    beq $a0,0,MAIN	# neu co, branch toi main	
-    b EXIT
-  EXIT: 
+Notification:
+	li $v0, 55	#in thong bao
+	la $a0, message
+	li $a1, 1
+	syscall
   ```
 
 ### Kết quả
