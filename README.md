@@ -540,14 +540,14 @@ P{…}
 
 * Khi chọn phím 0
 
-![Image](./finalReport/result1.png)
+![Image](./report/result1.png)
 
 * Khi chọn phím 4
 
-![Image](./finalReport/result2.png)
+![Image](./report/result2.png)
 
 * Khi chọn phím 8
 
-![Image](./finalReport/result3.png)
+![Image](./report/result3.png)
 
 
