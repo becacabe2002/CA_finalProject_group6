@@ -1,10 +1,3 @@
----
-tags: [Import-f31e]
-title: Báo cáo Bài tập lớn cuối kì
-created: '2022-07-19T03:55:18.479Z'
-modified: '2022-07-20T02:35:56.183Z'
----
-
 # Báo cáo Bài tập lớn cuối kì
 ### Bộ môn: Thực hành kiến trúc máy tính
 ### Nhóm 6:
@@ -42,6 +35,55 @@ Có 3 chương trình con chính:
     * In số lượng từ đúng ra led 7 thanh
 
 * Ngoài ra còn có chương trình phục vụ: hiện số trên led 7 thanh 
+### Lưu đồ giải thuật
+```mermaid
+graph TD
+  START --> t1
+
+  subgraph Interupt_Handler
+  inter1(return interupt cause) --> inter2(read KEY_CODE)
+  inter2 -- KEY_CODE = 08 --> inter3(Delete char <br> total input -1)
+  inter2 -- KEY_CODE != 08 --> inter5(Check DISPLAY_READY)
+  inter5 -- 0 --> inter5
+  inter5 -- 1 --> inter6(Show input key)
+  inter6 --> inter7(Store input key in storestring <br> total input + 1)
+  inter7 --> inter8(Input key = ENTER)
+  inter3 --> inter4(Set PC pointer back <br> move to next instruction)
+  inter8 -- FALSE --> inter4
+  end
+
+  inter8 -- TRUE --> c1
+
+  subgraph timer
+  t1(Check input control bit) -- 1 --> t5(input counter + 1 <br> total input + 1)
+  t1 -- 0 --> t2(check round counter)
+  t2 -- <200 --> t3(sleep 5ms <br> round counter + 1)
+  t3 --> t1
+  t2 -- =200 --> t4(Print input counter <br> using 7 segments led)
+  t4 --> t6(reset input counter <br> reset round counter)
+  t6 --> t1
+  end
+  t5 --> inter1
+  inter4 --> t2
+
+  subgraph string_Check
+  c1(Compare ? stringsource < storestring) -- stringsource --> c2(set storestring as biggerstr <br>set stringsource as smallerstr)
+  c1 -- storestring --> c3(set storestring as smallerstr <br>set stringsource as biggerstr)
+  c2 --> c4(set ptr1 for smallerstr <br> set ptr2 for biggerstring)
+  c3 --> c4
+  c4 --> c5(compare vals at ptr1 and ptr2)
+  c5 -- equal --> c6(result counter + 1)
+  c6 --> c7(ptr1 + 1 <br> ptr2 + 1)
+  c5 -- not equal --> c7
+  c7 --> c8(ptr1? = End of smallerstr)
+  c8 -- true --> c9(Print Result using <br> 7 segments LED)
+  c8 -- false --> c5
+  end
+
+  c9 --> ASK_LOOP(Continue?)
+  ASK_LOOP -- no --> END_PROGRAM
+  ASK_LOOP -- yes --> START
+```
 
 ### Tiến hành giải thuật
 **A. PART 1**:
@@ -150,7 +192,16 @@ notification: .asciiz "\n ban co muon quay lai chuong trinh? "
         lw   $t2, 0($s1)            	# $t2 = [$s1] = DISPLAY_READY            
         beq  $t2, $zero, WAIT_FOR_DIS	# if $t2 == 0 then Polling   
     ```
-  * Nếu giá trị là 1, hiện các ký tự nhập vào ra display MMIO.
+  * Check xem ký tự nhập vào có phải là dấu `BACKSPACE`:
+    ```shell
+    	beq $t0, 8, DELETE_CHAR  # neu ky hieu nhan vao la phim BACKSPACE, nhảy tới DELETE_CHAR
+    
+    DELETE_CHAR: # viec xoa ki tu nhap vao tuong duong
+	               # voi viec lam giam tong so ky tu nhap vao s4 di 1
+	    addi $s4, $s4, -1
+	    sb $t0, 0($s0) # tiep tuc toi END_PROCESS
+    ```
+  * Nếu ký tự nhập vào không phải là `BACKSPACE` và giá trị `DISPLAY_READY` là 1, hiện các ký tự nhập vào ra display MMIO.
     ```shell
     SHOW_KEY: 
       sb $t0, 0($s0)         # hien thi ky tu vua nhap tu ban phim tren man hinh MMIO
@@ -162,6 +213,8 @@ notification: .asciiz "\n ban co muon quay lai chuong trinh? "
               
       beq $t0,10,END      # Can chu y toi ki hieu xuong dong '\n' - ASCII: 10
       # Neu xuat hien '\n' --> xong input process --> Chuyen toi END
+      
+      j END_PROCESS
     ```
       * Tiến hành lưu ký tự input vào mảng chứa các ký tự
   * Nếu kí tự nhập vào là dấu xuống dòng ('\n') => nhảy tới end của chương trình
@@ -184,6 +237,15 @@ notification: .asciiz "\n ban co muon quay lai chuong trinh? "
                           # t8 chua do dai cua sau input
       addi $t8,$t8,-1			#tru 1 vi ky tu cuoi cung la dau enter thi khong can xet.
     ```
+* Kết thúc chương trình ngắt, reset lại địa chỉ thanh ghi về chương trình chính, dịch tới lệnh tiếp theo trên chương trình chính
+  ```shell
+  END_PROCESS:                         
+  NEXT_PC:   mfc0    $at, $14	        # $at <= Coproc0.$14 = Coproc0.epc              
+        addi    $at, $at, 4	        # $at = $at + 4 (next instruction)              
+              mtc0    $at, $14	       	# Coproc0.$14 = Coproc0.epc <= $at  
+  RETURN:   eret                       	# tro ve len ke tiep cua chuong trinh chinh
+  ```
+
 ***III. Bộ check độ chính xác chuỗi input***
 ```shell
 CHECK_STRING:			
@@ -265,8 +327,16 @@ SHOW_7SEG_RIGHT:
 **C.KẾT THÚC**
 * Hỏi người dùng có muốn thực hiện lại chương trình hay không?
 ```shell
-
-```
+  ASK_LOOP: # hoi nguoi dung co muon lap lai chuong trinh khong
+    li $v0, 50
+    la $a0, notification
+    syscall
+    beq $a0,0,MAIN	# neu co, branch toi main	
+    b EXIT
+  EXIT: 
+  ```
+### Hình ảnh minh hoạ
+![Ảnh minh hoạ bài 3](./report/result_ex3.png)
 
 ## Câu 4: *"Postscript CNC Marsbot"*
 
@@ -535,6 +605,20 @@ P{…}
 	}
 
 ```
+**D. KẾT THÚC CHƯƠNG TRÌNH**
+* Dừng Marsbot, hỏi người dùng có muốn thực hiện lại chương trình hay không?
+  ```shell
+  END:
+    jal STOP
+    
+  ASK_LOOP: # hoi nguoi dung co muon lap lai chuong trinh khong
+    li $v0, 50
+    la $a0, notification
+    syscall
+    beq $a0,0,MAIN	# neu co, branch toi main	
+    b EXIT
+  EXIT: 
+  ```
 
 ### Kết quả
 
@@ -549,5 +633,4 @@ P{…}
 * Khi chọn phím 8
 
 ![Image](./report/result3.png)
-
 
