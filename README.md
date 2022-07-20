@@ -572,38 +572,35 @@ postcript3: .asciiz "180,9000,0;90,2000,0;0,6000,1;140,4000,1;40,4000,1;180,6000
 
 *MÃ GIẢ*
 ```c
-P{…}
+	P{…}
 	a0=0;a1=0;i=0;
 	*m;
-	while(1>0){
+	While(1>0){
 		t0=0;t1=0;
 		m = &P[i]
 		if (*m == NULL) break;
-		else if(*m==’,’) 
-      while(1>0){
+		else if(*m==’,’) while(1>0){
 			a0=t0;
 			i++;
 			m = &P[i];
 			if(*m==’,’){
 				a1=t1;
-        i++; 
-        m = &P[i];
-        if(*m=1) 
-          printf(“track’);
-				else if(*m=0) 
-          printf(“untrack”);
-          i++ ;break;
-      }
+				i++; 
+				m = &P[i];
+				if(*m=1) printf(“track");
+				else if(*m=0) printf(“untrack”);
+				i++;
+				break;
+			}
 			t1=t1x10;
 			t1=t1+*m;
 		}
 		else{
 		t0 = t0x10;
 		t0 = t0 + *m ;
-    i++ ;
+		i++ ;
 		}
 	}
-
 ```
 **D. KẾT THÚC CHƯƠNG TRÌNH**
 * Dừng Marsbot, hỏi người dùng có muốn thực hiện lại chương trình hay không?
