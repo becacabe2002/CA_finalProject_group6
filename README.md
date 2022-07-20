@@ -608,7 +608,7 @@ postcript3: .asciiz "180,9000,0;90,2000,0;0,6000,1;140,4000,1;40,4000,1;180,6000
   END:
     jal STOP
     
-Notification:
+  Notification:
 	li $v0, 55	#in thong bao
 	la $a0, message
 	li $a1, 1
