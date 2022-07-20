@@ -55,7 +55,7 @@ READ_POSTCRIPT:
 	addi $t0, $zero, 0 # Luu gia tri rotate
 	addi $t1, $zero, 0 # Luu gia tri time
 	
- 	READ_ROTATE:# Ä?oc goc quay
+ 	READ_ROTATE:# doc goc quay
  	add $t7, $a1, $t6 # dich bit ($a1 luu dia chi cua postscript)
 	lb $t5, 0($t7)  # doc ki tu postscript
 	beq $t5, 0, END # Ket thuc postscript
