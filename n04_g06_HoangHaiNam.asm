@@ -1,3 +1,5 @@
+# Bai tap cua nhom co tham khao tu nguon: https://github.com/BlazingRockStorm/MISP-assembly-of-HEDSPI
+
 # Mars bot
 .eqv HEADING 0xffff8010 
 .eqv MOVING 0xffff8050
