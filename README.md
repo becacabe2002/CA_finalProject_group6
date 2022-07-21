@@ -490,7 +490,7 @@ postcript3: .asciiz "180,9000,0;90,2000,0;0,6000,1;140,4000,1;40,4000,1;180,6000
     add $t7, $a1, $t6 # dịch bit ($a1 lưu địa chỉ của postscript)
     lb $t5, 0($t7)  # Đọc kí tự postscript
     beq $t5, 0, END # Kết thúc postscript
-    beq $t5, 44, READ_TIME # Gặp dấu "." thì chuyển sang đọc thời gian
+    beq $t5, 44, READ_TIME # Gặp dấu "," thì chuyển sang đọc thời gian
     mul $t0, $t0, 10 # Nhân 10 giá trị lúc trước
     addi $t5, $t5, -48 # Chuyển số theo mã ascii về dạng thập phân
     add $t0, $t0, $t5  # Cộng các chữ số
