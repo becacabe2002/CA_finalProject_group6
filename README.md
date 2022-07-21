@@ -562,7 +562,7 @@ postcript3: .asciiz "180,9000,0;90,2000,0;0,6000,1;140,4000,1;40,4000,1;180,6000
   ```
   * **$t5 = 1** -> để lại dấu
   * **$t5 = 0** -> Không để lại dấu
-  * Bỏ qua dấu `,` để chuyển tới vòng đọc tiếp
+  * Bỏ qua dấu `;` để chuyển tới vòng đọc tiếp
     ```shell
     NEXT:
       syscall
